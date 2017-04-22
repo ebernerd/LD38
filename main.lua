@@ -1,5 +1,9 @@
 --global variables--
 Gamestate = "Editor"
+Textures = {}
+for i, v in pairs( love.filesystem.getDirectoryItems( "assets/textures" ) ) do
+	Textures[v:sub(1, -5)] = love.graphics.newImage("assets/textures/" .. v)
+end
 
 require "camera"
 require "bump"

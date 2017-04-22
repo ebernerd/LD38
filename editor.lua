@@ -17,7 +17,8 @@ editor = {
 		bg = {}
 	},
 	layer = "mg",
-	speed = 4,
+	speed = 8,
+	drawMode = "normal",
 }
 
 
@@ -142,18 +143,24 @@ end
 function editor.draw()
 
 	if Gamestate == "Editor" then
+		love.graphics.setBackgroundColor( 69, 121, 173 )
 		love.graphics.setColor( 255, 255, 255 )
-		love.graphics.draw( editor.layers.bg )
-		love.graphics.draw( editor.layers.mg )
-		love.graphics.draw( editor.layers.fg )
-		if not love.keyboard.isDown( "lalt" ) then
+		if editor.drawMode == "normal" then
+			love.graphics.draw( editor.layers.bg )
+			love.graphics.draw( editor.layers.mg )
+			love.graphics.draw( editor.layers.fg )
+		elseif editor.drawMode == "single" then
+			love.graphics.draw( editor.layers[ editor.layer ] )
+		end
+		--if not love.keyboard.isDown( "lalt" ) then
 			love.graphics.printf( "(" .. editor.mx .. "," .. editor.my .. ")", editor.mx-editor.unit/2, editor.my+love.graphics.getFont():getHeight()+editor.unit-5, editor.unit*2, "center" )
 			local _,obj = editor.hasObj()
 			love.graphics.printf( "[" .. (obj or "none") .. "]", editor.mx-editor.unit/2, editor.my - love.graphics.getFont():getHeight()-2, editor.unit*2, "center")
-		end
+		--end
 		love.graphics.rectangle( "line", editor.mx, editor.my, editor.unit, editor.unit )
 		love.graphics.print( "Selected: " .. tilesConv[editor.selected], camera.x, camera.y )
 		love.graphics.print( "Layer: " .. editor.layer, camera.x, camera.y + 15 )
+		love.graphics.print( "Drawmode: " .. editor.drawMode, camera.x, camera.y + 30 )
 	end
 
 end
@@ -184,6 +191,13 @@ function editor.keyreleased( key )
 				editor.layer = "bg"
 			else
 				editor.layer = "mg"
+			end
+		end
+		if key == "lalt" then
+			if editor.drawMode == "normal" then
+				editor.drawMode = "single"
+			else
+				editor.drawMode = "normal"
 			end
 		end
 	end
